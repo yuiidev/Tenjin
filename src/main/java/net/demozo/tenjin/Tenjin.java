@@ -24,7 +24,7 @@ public class Tenjin {
     private static boolean isDebugEnabled = false;
     static DataSource source;
     static Converters converters;
-    static Logger logger = LoggerFactory.getLogger(Tenjin.class.getSimpleName());
+    static Logger logger = LoggerFactory.getLogger(Tenjin.class);
 
     public static void init(DataSource source) {
         if (converters == null) {
@@ -142,6 +142,15 @@ public class Tenjin {
                 field.setAccessible(true);
                 var value = field.get(model);
 
+                if(fieldClass.isEnum()) {
+                    query.append(":")
+                            .append(name)
+                            .append(", ");
+
+                    stmt.setParameter(name, value);
+                    continue;
+                }
+
                 if (field.isAnnotationPresent(Relationship.class)) {
                     var relationship = field.getAnnotation(Relationship.class);
 
@@ -163,6 +172,10 @@ public class Tenjin {
                 }
 
                 field.setAccessible(isAccessible);
+
+                if(converter == null) {
+                    throw new IllegalStateException("Converter is null for field %s of type %s.".formatted(field.getName(), field.getType()));
+                }
 
                 query.append(":")
                         .append(name)
