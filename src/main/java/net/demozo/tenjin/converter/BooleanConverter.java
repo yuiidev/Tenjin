@@ -36,11 +36,11 @@ public class BooleanConverter extends Converter<Boolean> {
 
     @Override
     public Boolean deserialize(ResultSet resultSet, String columnName) throws SQLException {
-        return resultSet.getBoolean(columnName);
+        return resultSet.getInt(columnName) > 0;
     }
 
     @Override
     public Object serialize(Boolean value) {
-        return value;
+        return value ? 1 : 0;
     }
 }
