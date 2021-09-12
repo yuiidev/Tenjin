@@ -18,7 +18,6 @@ import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class Tenjin {
@@ -119,7 +118,7 @@ public class Tenjin {
             var modelClass = model.getClass();
             var table = Optional.of(modelClass.getAnnotation(Table.class))
                     .orElseThrow(() -> new InvalidTableException(String.format("%s does not have a Table annotation.", modelClass.getName())));
-            var query = new StringBuilder("INSERT INTO ").append(table.name()).append(" VALUES(");
+            var query = new StringBuilder("INSERT INTO ").append(table.value()).append(" VALUES(");
             var stmt = new NamedStatement(source, query);
 
             List<Field> fields = getAllFieldsWithColumns(modelClass);
@@ -235,7 +234,7 @@ public class Tenjin {
 
         try {
             var table = clazz.getAnnotation(Table.class);
-            var query = String.format("SELECT * FROM %s", table.name());
+            var query = String.format("SELECT * FROM %s", table.value());
             var conn = source.getConnection();
             var stmt = conn.prepareStatement(query);
 
@@ -274,7 +273,7 @@ public class Tenjin {
 
         try {
             var table = clazz.getAnnotation(Table.class);
-            var query = new StringBuilder(String.format("SELECT * FROM %s", table.name()));
+            var query = new StringBuilder(String.format("SELECT * FROM %s", table.value()));
 
             for (var join : joins) {
                 var joinTable = join.table().getAnnotation(Table.class);
@@ -284,21 +283,21 @@ public class Tenjin {
                 }
 
                 query.append(" JOIN ")
-                        .append(joinTable.name())
+                        .append(joinTable.value())
                         .append(" ON ")
-                        .append(table.name())
+                        .append(table.value())
                         .append(".")
                         .append(join.columnB())
                         .append(" ")
                         .append(join.operator())
                         .append(" ")
-                        .append(joinTable.name())
+                        .append(joinTable.value())
                         .append(".")
                         .append(join.columnA());
             }
 
             query.append(" WHERE ")
-                    .append(table.name())
+                    .append(table.value())
                     .append(".")
                     .append(getFieldName(getPrimaryField(clazz)))
                     .append("=?");
@@ -342,7 +341,7 @@ public class Tenjin {
 
         try {
             var table = clazz.getAnnotation(Table.class);
-            var query = new StringBuilder(String.format("SELECT * FROM %s WHERE ", table.name()));
+            var query = new StringBuilder(String.format("SELECT * FROM %s WHERE ", table.value()));
             var firstWhere = true;
 
             for (var where : wheres) {
@@ -405,7 +404,7 @@ public class Tenjin {
 
         try {
             var table = clazz.getAnnotation(Table.class);
-            var query = String.format("SELECT * FROM %s WHERE id=?", table.name());
+            var query = String.format("SELECT * FROM %s WHERE id=?", table.value());
             var conn = source.getConnection();
             var stmt = conn.prepareStatement(query);
 
@@ -471,7 +470,7 @@ public class Tenjin {
                                 clazz,
                                 referencedClass,
                                 pkConverter,
-                                relationship.columnName(),
+                                relationship.value(),
                                 key,
                                 relationship.type()
                         );
@@ -496,7 +495,7 @@ public class Tenjin {
                                 clazz,
                                 referencedClass,
                                 pkConverter,
-                                relationship.columnName(),
+                                relationship.value(),
                                 key,
                                 relationship.type()
                         );
@@ -558,7 +557,7 @@ public class Tenjin {
     static String getFieldName(Field field) {
         var column = field.getAnnotation(Column.class);
 
-        if (column.name().isEmpty()) {
+        if (column.value().isEmpty()) {
             var name = kebabCase(field.getName());
 
             if (field.isAnnotationPresent(Relationship.class)) {
@@ -567,7 +566,7 @@ public class Tenjin {
 
             return name;
         } else {
-            return column.name();
+            return column.value();
         }
     }
 

@@ -7,7 +7,12 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Column {
     String type() default "";
-    String name() default "";
+
+    /**
+     * Name of the column.
+     * @return
+     */
+    String value() default "";
     int length() default Integer.MAX_VALUE;
     boolean nullable() default false;
     boolean autoIncrements() default false;

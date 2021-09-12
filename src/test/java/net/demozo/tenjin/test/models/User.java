@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@Table(name = "users")
+@Table("users")
 public class User extends Model<UUID> implements HasTimestamps {
     @Column
     @PrimaryKey
@@ -31,7 +31,7 @@ public class User extends Model<UUID> implements HasTimestamps {
     @Column
     private Instant updatedAt;
 
-    @Relationship(columnName = "author_id", type = RelationshipType.HasMany)
+    @Relationship(value = "author_id", type = RelationshipType.HasMany)
     private ReferenceCollection<BlogPost, UUID> posts;
 
     public User() {}

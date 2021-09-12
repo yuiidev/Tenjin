@@ -9,7 +9,7 @@ import net.demozo.tenjin.annotation.Table;
 
 import java.util.UUID;
 
-@Table(name = "tags")
+@Table("tags")
 public class Tag extends Model<Integer> {
     @Column
     private String name;

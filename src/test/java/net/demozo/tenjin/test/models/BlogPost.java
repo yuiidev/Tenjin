@@ -10,7 +10,7 @@ import net.demozo.tenjin.annotation.Table;
 
 import java.util.UUID;
 
-@Table(name = "blog_posts")
+@Table("blog_posts")
 public class BlogPost extends Model<UUID> {
     @Column
     @PrimaryKey
@@ -23,7 +23,7 @@ public class BlogPost extends Model<UUID> {
     private String slug;
 
     @Column
-    @Relationship(columnName = "author_id", type = RelationshipType.BelongsToOne)
+    @Relationship(value = "author_id", type = RelationshipType.BelongsToOne)
     private Reference<User, UUID> author;
 
     public UUID getId() {

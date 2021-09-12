@@ -10,6 +10,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Relationship {
-    String columnName() default "id";
+    /**
+     * The name of the column.
+     * @return
+     */
+    String value() default "id";
     RelationshipType type();
 }
